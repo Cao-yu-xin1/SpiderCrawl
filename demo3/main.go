@@ -1,4 +1,4 @@
-package main
+package demo3
 
 import (
 	"fmt"
@@ -9,10 +9,10 @@ import (
 )
 
 func main() {
-	clickE()
+	clickE("https://air.1688.com/kapp/channel-fe/cps-4c-pc/sytm?type=1&offerIds=660390230106,574965204819,949033739317")
 }
 
-func clickE() {
+func clickE(pageUrl string) {
 	url := launcher.New().
 		Headless(false). // 调试阶段设为false，确认成功后再改为true
 		Set("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36").
@@ -23,7 +23,7 @@ func clickE() {
 	defer browser.MustClose()
 
 	// 2. 访问列表页（移除URL中的空格）
-	listPage := browser.MustPage("https://air.1688.com/kapp/channel-fe/cps-4c-pc/sytm?type=1&offerIds=660390230106,574965204819,949033739317")
+	listPage := browser.MustPage(pageUrl)
 	listPage.MustWaitLoad()
 
 	// 3. 等待商品列表加载完成

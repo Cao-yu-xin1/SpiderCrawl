@@ -1,39 +1,31 @@
-package main
+package demo1
 
 import (
 	"fmt"
+	"github.com/Cao-yu-xin1/SpiderCrawl/pkg/spider"
 	"time"
-
-	"github.com/go-rod/rod"
-	"github.com/go-rod/rod/lib/launcher"
 )
 
-func main() {
-	// 启动浏览器（隐藏模式，可配置用户代理）
-	url := launcher.New().
-		Headless(true). // 设为false可查看浏览器操作过程
-		Set("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36").
-		MustLaunch()
-
-	browser := rod.New().ControlURL(url).MustConnect()
+func TitleCrawler(pageUrl string, elementSelector string) {
+	browser := spider.SpiderUrl()
 	defer browser.MustClose()
 
 	// 访问1688页面
-	page := browser.MustPage("https://air.1688.com/kapp/channel-fe/cps-4c-pc/sytm?type=1&offerIds=660390230106,574965204819,949033739317")
+	page := browser.MustPage(pageUrl)
 
 	// 等待页面基本加载完成
 	page.MustWaitLoad()
 
 	// 1688页面有动态加载，增加额外等待时间
 	// 等待元素出现，最长等待10秒
-	err := page.Timeout(10 * time.Second).MustElement(`.offer-title.ellipsis`).WaitVisible()
+	err := page.Timeout(10 * time.Second).MustElement(elementSelector).WaitVisible()
 	if err != nil {
 		fmt.Println("等待元素超时:", err)
 		return
 	}
 
 	// 获取所有匹配的元素
-	elements := page.MustElements(`.offer-title.ellipsis`)
+	elements := page.MustElements(elementSelector)
 
 	fmt.Printf("找到 %d 个商品标题:\n", len(elements))
 
@@ -57,3 +49,8 @@ func main() {
 		}
 	}
 }
+
+//func main() {
+//	TitleCrawler("https://air.1688.com/kapp/channel-fe/cps-4c-pc/sytm?type=1&offerIds=660390230106,574965204819,949033739317",
+//		`.offer-title.ellipsis`)
+//}
